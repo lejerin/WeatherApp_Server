@@ -78,18 +78,17 @@ app.get("/api/grid", (req, res) => {
             if (value[0]['3단계'] != "") {
                 address += " " + value[0]['3단계']
             }
-
-            res.json({result: true, data: {
+            res.status(200).json({result: true, message: null, data: {
                 "province": value[0]['1단계'],
                 "address": address,
                 "x": value[0]['격자 X'],
                 "y": value[0]['격자 Y']
             }})
         } else {
-            res.json({result: false, errorMessage: "일치하는 좌표가 없습니다."})
+            res.status(404).json({result: false, message: "일치하는 주소를 찾지 못하였습니다.", data: null})
         }
     } catch (err) {
-        res.json({result: false, errorMessage: "에러 발생" + err.message})
+        res.status(500).json({result: false, message: "서버 에러" + err.message, data: null})
     }
 })
 
