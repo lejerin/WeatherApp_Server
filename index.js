@@ -54,27 +54,43 @@ function getExcelData() {
 
 app.get("/api/grid", (req, res) => {
 
-    let latitude = req.query.latitude
-    let longitude = req.query.longitude
-    let xy = dfs_xy_conv(latitude, longitude)
-    console.log(latitude)
-    console.log(longitude)
-    console.log(xy)
-    let pow = latitude * latitude + longitude * longitude
-    const value = gridValue[0].filter(data => 
-        data['격자 X'] == xy['x'].toString() && data['격자 Y'] == xy['y'].toString()
-    ).sort(function(a, b) {
-        let alo = parseFloat(a['경도(초/100)'])
-        let ala = parseFloat(a['위도(초/100)'])
-        let blo = parseFloat(b['경도(초/100)'])
-        let bla = parseFloat(b['위도(초/100)'])
+    try {
+        let latitude = req.query.latitude
+        let longitude = req.query.longitude
+        let xy = dfs_xy_conv(latitude, longitude)
+        let pow = latitude * latitude + longitude * longitude
+        const value = gridValue[0].filter(data => 
+            data['격자 X'] == xy['x'].toString() && data['격자 Y'] == xy['y'].toString()
+        ).sort(function(a, b) {
+            let alo = parseFloat(a['경도(초/100)'])
+            let ala = parseFloat(a['위도(초/100)'])
+            let blo = parseFloat(b['경도(초/100)'])
+            let bla = parseFloat(b['위도(초/100)'])
+    
+            let a_pow = Math.abs(alo*alo + ala*ala - pow)
+            let b_pow = Math.abs(blo*blo + bla*bla - pow)
+    
+            return a_pow - b_pow
+        });      
+        if (value.length != 0) {
 
-        let a_pow = Math.abs(alo*alo + ala*ala - pow)
-        let b_pow = Math.abs(blo*blo + bla*bla - pow)
+            var address = value[0]['2단계']
+            if (value[0]['3단계'] != "") {
+                address += " " + value[0]['3단계']
+            }
 
-        return a_pow - b_pow
-    });        
-    res.json({ok: true, grid: value[0]})
+            res.json({result: true, data: {
+                "province": value[0]['1단계'],
+                "address": address,
+                "x": value[0]['격자 X'],
+                "y": value[0]['격자 Y']
+            }})
+        } else {
+            res.json({result: false, errorMessage: "일치하는 좌표가 없습니다."})
+        }
+    } catch (err) {
+        res.json({result: false, errorMessage: "에러 발생" + err.message})
+    }
 })
 
 var RE = 6371.00877; // 지구 반경(km)
