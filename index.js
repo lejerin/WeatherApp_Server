@@ -81,8 +81,8 @@ app.get("/api/grid", (req, res) => {
             res.status(200).json({result: true, message: null, data: {
                 "province": value[0]['1단계'],
                 "address": address,
-                "x": value[0]['격자 X'],
-                "y": value[0]['격자 Y']
+                "x": parseInt(value[0]['격자 X']),
+                "y": parseInt(value[0]['격자 Y'])
             }})
         } else {
             res.status(404).json({result: false, message: "일치하는 주소를 찾지 못하였습니다.", data: null})
