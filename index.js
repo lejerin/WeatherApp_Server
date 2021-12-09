@@ -19,10 +19,12 @@ app.use(express.urlencoded({ extended: true}));
 
 //임시 데이터
 const gridValue = [];
-getExcelData()
+const regionValue = [];
+getExcelData('weather.xlsx', gridValue)
+getExcelData('region.xlsx', regionValue)
 
-function getExcelData() {
-    var workbook = XLSX.readFile('weather.xlsx');
+function getExcelData(fileName, output) {
+    var workbook = XLSX.readFile(fileName);
     var sheet_name_list = workbook.SheetNames;
     sheet_name_list.forEach(function(y) {
         var worksheet = workbook.Sheets[y];
@@ -47,8 +49,7 @@ function getExcelData() {
         //drop those first two rows which are empty
         data.shift();
         data.shift();
-        gridValue.push(data)
-        console.log(typeof data[0]['격자 X'])
+        output.push(data)
     });
 }
 
@@ -74,6 +75,16 @@ app.get("/api/grid", (req, res) => {
             return a_pow - b_pow
         });      
         if (value.length != 0) {
+
+            var depth_1 = value[0]['1단계']
+            var filter = depth_1.substring(0,2)
+            if (depth_1[depth_1.length-1] != "시") { // 시로 끝나면
+                filter = value[0]['2단계'].substring(0,2)
+            }
+            const regId = regionValue[0].filter(regionData => 
+                regionData['도시'].startsWith(filter)
+            )[0]
+            
             var address = value[0]['2단계']
             if (address.length > 5) {
                 if (address[2] == "시") {
@@ -85,8 +96,9 @@ app.get("/api/grid", (req, res) => {
             if (value[0]['3단계'] != "") {
                 address += " " + value[0]['3단계']
             }
+
             res.status(200).json({result: true, message: null, data: {
-                "province": value[0]['1단계'],
+                "regId": regId['코드'],
                 "address": address,
                 "x": parseInt(value[0]['격자 X']),
                 "y": parseInt(value[0]['격자 Y'])
