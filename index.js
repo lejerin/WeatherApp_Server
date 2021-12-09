@@ -75,7 +75,7 @@ app.get("/api/grid", (req, res) => {
         });      
         if (value.length != 0) {
             var address = value[0]['2단계']
-            if (address.length > 3) {
+            if (address.length > 5) {
                 if (address[2] == "시") {
                     address = address.substring(3, address.length);
                 } else {
