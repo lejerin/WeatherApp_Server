@@ -58,6 +58,7 @@ app.get("/api/grid", (req, res) => {
         let latitude = req.query.latitude
         let longitude = req.query.longitude
         let xy = dfs_xy_conv(latitude, longitude)
+        console.log(xy)
         let pow = latitude * latitude + longitude * longitude
         const value = gridValue[0].filter(data => 
             data['격자 X'] == xy['x'].toString() && data['격자 Y'] == xy['y'].toString()
@@ -73,8 +74,14 @@ app.get("/api/grid", (req, res) => {
             return a_pow - b_pow
         });      
         if (value.length != 0) {
-
             var address = value[0]['2단계']
+            if (address.length > 3) {
+                if (address[2] == "시") {
+                    address = address.substring(3, address.length);
+                } else {
+                    address = address.substring(4, address.length);
+                }
+            } 
             if (value[0]['3단계'] != "") {
                 address += " " + value[0]['3단계']
             }
