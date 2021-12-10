@@ -99,6 +99,7 @@ app.get("/api/grid", (req, res) => {
 
             res.status(200).json({result: true, message: null, data: {
                 "regId": regId['코드'],
+                "FcstRegId": regId['예보코드'],
                 "address": address,
                 "x": parseInt(value[0]['격자 X']),
                 "y": parseInt(value[0]['격자 Y'])
