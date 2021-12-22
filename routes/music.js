@@ -6,8 +6,18 @@ var router = express.Router();
 router.get("/", (req, res) => {
     try {
         let name = req.query.name
-        const readStream = fs.createReadStream(`./resource/${name}.mp3`)
+        let filePath = `./resource/${name}.mp3`
+        const readStream = fs.createReadStream(filePath)
         readStream.on('open', function () {
+            const stat = fs.statSync(filePath)
+            const fileSize = stat.size
+            const header = {
+                'Accept-Ranges': 'bytes',
+                'Content-Type'  : 'audio/mpeg',
+                'Content-Length': fileSize,
+            }
+            res.writeHead(200, header);
+
             readStream.pipe(res);
         })
         readStream.on('error', function(err) {
