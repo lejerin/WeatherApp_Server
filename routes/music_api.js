@@ -1,14 +1,6 @@
 //express 모듈 불러오기
 const express = require("express");
 var router = express.Router();
-var fs = require('fs');
-var cssFile;
-fs.readFile('./routes/default.css', function(err, data) {
-    if (err){
-        throw err;
-    }
-    cssFile = data;
-});
 
 router.get('/',function(req, res){
     try {
