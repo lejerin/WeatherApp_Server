@@ -3,28 +3,36 @@ const express = require("express");
 var fs = require('fs');
 var router = express.Router();
 
-router.get("/", (req, res) => {
+router.get('/', function (req, res) {
     try {
-        let mck = req.query.mck
-        let filePath = `./resource/${mck}.mp3`
-        const readStream = fs.createReadStream(filePath)
-        readStream.on('open', function () {
-            const stat = fs.statSync(filePath)
-            const fileSize = stat.size
-            const header = {
-                'Accept-Ranges': 'bytes',
-                'Content-Type'  : 'audio/mpeg',
-                'Content-Length': fileSize,
-            }
-            res.writeHead(200, header);
-            readStream.pipe(res);
-        })
-        readStream.on('error', function(err) {
-            res.status(404).json({result: false, message: "일치하는 노래를 찾지 못하였습니다.", data: null})
-        })
+
+    let mck = req.query.mck
+    let filePath = `./resource/${mck}.mp3`
+    var stat = fs.statSync(filePath);
+    var total = stat.size;
+    if (req.headers.range) {
+        var range = req.headers.range;
+        var parts = range.replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var partialend = parts[1];
+
+        var start = parseInt(partialstart, 10);
+        var end = partialend ? parseInt(partialend, 10) : total-1;
+        var chunksize = (end-start)+1;
+        var readStream = fs.createReadStream(filePath, {start: start, end: end});
+        res.writeHead(206, {
+            'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+            'Accept-Ranges': 'bytes', 'Content-Length': chunksize,
+            'Content-Type': 'audio/mpeg'
+        });
+        readStream.pipe(res);
+     } else {
+        res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'audio/mpeg' });
+        fs.createReadStream(filePath).pipe(res);
+     } 
     } catch (err) {
         res.status(500).json({result: false, message: "서버 에러" + err.message, data: null})
     }
-})
+});
 
 module.exports = router;
