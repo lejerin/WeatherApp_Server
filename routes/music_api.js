@@ -146,6 +146,15 @@ router.get('/',function(req, res){
         <h4>Response</h4>  
         <p>2번 전체 목록 응답과 동일</p>
         <p>최신 발매순으로 정렬하여 10곡 리스트 반환</p>
+        <br>
+        <br>
+        <h2>5. mck에 해당하는 음악 리스트 가져오기</h2>
+        <h4>URL</h4>
+        <p>GET&nbsp;&nbsp;&nbsp;/music/info/mck?mcklist={mck1,mck2,mck3}</p>
+        <h4>Response</h4>  
+        <p>mck 정보 리스트를 String으로 query로 받으면, 해당하는 음악 리스트를 반환</p>
+        <p>ex) https://happyweatherapp.herokuapp.com/music/info/mck?mcklist=1,3,5,7</p>
+        <p>2번 전체 목록 응답과 동일</p>
         </body>
         </html>
 `
