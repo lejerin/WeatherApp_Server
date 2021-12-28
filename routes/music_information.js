@@ -44,6 +44,24 @@ router.get("/top", (req, res) => {
     }
 })
 
+router.get("/mck", (req, res) => {
+    try {
+        const mckList = req.query.mcklist.split(",");
+        const dataArray = musicInfo[0].filter(data => 
+            mckList.includes(String(data['mck']))
+        ).sort(function(a, b) { 
+            return mckList.indexOf(a['mck']) - mckList.indexOf(b['mck'])
+        });
+        if (dataArray.length > 0) {
+            res.status(200).json({result: true, message: null, data: dataArray})
+        } else {
+            res.status(501).json({result: false, message: "일치하는 노래 정보를 찾지 못하였습니다.", data: null})
+        }
+    } catch (err) {
+        res.status(500).json({result: false, message: "서버 에러" + err.message, data: null})
+    }
+})
+
 function getExcelData(fileName, output) {
     var workbook = XLSX.readFile(fileName);
     var sheet_name_list = workbook.SheetNames;
