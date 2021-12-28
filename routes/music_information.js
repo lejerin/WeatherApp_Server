@@ -8,7 +8,10 @@ getExcelData('music_info.xlsx', musicInfo)
 
 router.get("/total", (req, res) => {
     try {
-        res.status(200).json({result: true, message: null, data: musicInfo[0]})
+        const dataArray = musicInfo[0].sort(function(a, b) { 
+            return a['mck'] - b['mck'] 
+        });
+        res.status(200).json({result: true, message: null, data: dataArray})
     } catch (err) {
         res.status(500).json({result: false, message: "서버 에러" + err.message, data: null})
     }
