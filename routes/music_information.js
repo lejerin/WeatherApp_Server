@@ -14,6 +14,19 @@ router.get("/total", (req, res) => {
     }
 })
 
+router.get("/new", (req, res) => {
+    try {
+        const dataArray = musicInfo[0].sort(function(a, b) { 
+            const aDateArr = a['releaseDate'].split(".");
+            const bDateArr = b['releaseDate'].split(".");
+            return parseInt(bDateArr[0] + bDateArr[1] + bDateArr[2]) - parseInt(aDateArr[0] + aDateArr[1] + aDateArr[2])
+        })
+        res.status(200).json({result: true, message: null, data: dataArray.slice(0,10)})
+    } catch (err) {
+        res.status(500).json({result: false, message: "서버 에러" + err.message, data: null})
+    }
+})
+
 router.get("/top", (req, res) => {
     try {
         const dataArray = musicInfo[0].filter(data => 

@@ -139,6 +139,13 @@ router.get('/',function(req, res){
         <p>subGenre : String?</p>
         그 외, 모든 타입 String    
         <br>
+        <br>
+        <h2>4. 최신 음악 리스트 가져오기</h2>
+        <h4>URL</h4>
+        <p>GET&nbsp;&nbsp;&nbsp;/music/info/new</p>
+        <h4>Response</h4>  
+        <p>2번 전체 목록 응답과 동일</p>
+        <p>최신 발매순으로 정렬하여 10곡 리스트 반환</p>
         </body>
         </html>
 `
